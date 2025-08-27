@@ -2,6 +2,8 @@ package com.saadeh.TDD_Event_City.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.saadeh.TDD_Event_City.dto.CityDTO;
+import com.saadeh.TDD_Event_City.tests.TokenUtil;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -28,6 +30,44 @@ public class CityControllerIT {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private TokenUtil tokenUtil;
+
+    private String clientUsername;
+    private String clientPassword;
+    private String adminUsername;
+    private String adminPassword;
+    private String clientToken;
+    private String adminToken;
+    private String invalidToken;
+
+    @BeforeEach
+    void setUp() throws Exception {
+        clientUsername = "ana@gmail.com";
+        clientPassword = "123456";
+        adminUsername = "bob@gmail.com";
+        adminPassword = "123456";
+        clientToken = tokenUtil.obtainAccessToken(mockMvc, clientUsername, clientPassword);
+        adminToken = tokenUtil.obtainAccessToken(mockMvc, adminUsername, adminPassword);
+        invalidToken = adminToken + "xpto";//simulates a wrong token
+    }
+
+    @Test
+    public void insertShouldReturn401WhenInvalidToken() throws Exception {
+        CityDTO dto = new CityDTO(null, "Recife");
+        String jsonBody = objectMapper.writeValueAsString(dto);
+
+        ResultActions result =
+                mockMvc.perform(post("/cities")
+                        .header("Authorization", "Bearer " + invalidToken)
+                        .content(jsonBody)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                );
+
+        result.andExpect(status().isUnauthorized());
+    }
 
     @Test
     public void findAllShouldReturnAllResourcesSortedByName() throws Exception {
