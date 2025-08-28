@@ -1,7 +1,9 @@
 package com.saadeh.TDD_Event_City.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.saadeh.TDD_Event_City.dto.CityDTO;
+import com.saadeh.TDD_Event_City.entities.City;
 import com.saadeh.TDD_Event_City.tests.TokenUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -67,6 +69,57 @@ public class CityControllerIT {
                 );
 
         result.andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    public void insertShouldReturn403WhenClientLogged() throws Exception{
+        CityDTO dto = new CityDTO(null,"Recife");
+        String jsonBody = objectMapper.writeValueAsString(dto);
+
+        ResultActions result =
+                mockMvc.perform(post("/cities")
+                        .header("Authorization", "Bearer " + clientToken)
+                        .content(jsonBody)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                );
+
+        result.andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void insertShouldInsertResourceWhenAdminLoggedAndCorrectData() throws Exception{
+        CityDTO dto = new CityDTO(null,"Recife");
+        String jsonBody = objectMapper.writeValueAsString(dto);
+
+        ResultActions result =
+                mockMvc.perform(post("/cities")
+                        .header("Authorization","Bearer " + adminToken)
+                        .content(jsonBody)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                );
+
+        result.andExpect(status().isCreated());
+        result.andExpect(jsonPath("$.id").exists());
+        result.andExpect(jsonPath("$.name").value("Recife"));
+    }
+
+    @Test
+    public void insertShouldReturn422WhenAdminLoggedAndBlackName() throws Exception {
+        CityDTO dto = new CityDTO(null, "   ");
+        String jsonBody = objectMapper.writeValueAsString(dto);
+
+        ResultActions result =
+                mockMvc.perform(post("/cities")
+                        .header("Authorization", "Bearer" + adminToken)
+                        .content(jsonBody)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                );
+        result.andExpect(status().isUnprocessableEntity());
+        result.andExpect(jsonPath("$.errors[0].fieldName").value("name"));
+        result.andExpect(jsonPath("$.errors[0].message").value("Campo requerido"));
     }
 
     @Test
