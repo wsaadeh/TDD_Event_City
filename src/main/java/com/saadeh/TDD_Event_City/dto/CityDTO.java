@@ -1,6 +1,7 @@
 package com.saadeh.TDD_Event_City.dto;
 
 import com.saadeh.TDD_Event_City.entities.City;
+import jakarta.validation.constraints.NotBlank;
 
 import java.io.Serializable;
 
@@ -8,6 +9,8 @@ public class CityDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long id;
+
+    @NotBlank(message = "Campo requerido")
     private String name;
 
     public CityDTO() {
