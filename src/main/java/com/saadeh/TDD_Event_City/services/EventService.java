@@ -37,4 +37,12 @@ public class EventService {
         entity.setUrl(dto.getUrl());
         entity.setCity(cityRepository.getReferenceById(dto.getCityId()));
     }
+
+    @Transactional
+    public EventDTO insert(EventDTO dto) {
+        Event entity = new Event();
+        copyDtoToEntity(entity,dto);
+        repository.save(entity);
+        return new EventDTO(entity);
+    }
 }

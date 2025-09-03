@@ -4,6 +4,7 @@ import com.saadeh.TDD_Event_City.dto.CityDTO;
 import com.saadeh.TDD_Event_City.services.CityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -22,6 +23,7 @@ public class CityController {
         return service.findAll();
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping
     public ResponseEntity<CityDTO> insert(@RequestBody CityDTO dto) {
         dto = service.insert(dto);
@@ -34,6 +36,7 @@ public class CityController {
                 .body(dto);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<CityDTO> delete(@PathVariable Long id){
         service.delete(id);
