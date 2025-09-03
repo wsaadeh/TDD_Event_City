@@ -58,6 +58,10 @@ public class User implements UserDetails {
         this.email = email;
     }
 
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public void addRole(Role role){ roles.add(role);}
 
     public boolean hasRole(String roleName){
