@@ -1,6 +1,10 @@
 package com.saadeh.TDD_Event_City.dto;
 
 import com.saadeh.TDD_Event_City.entities.Event;
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -9,9 +13,15 @@ public class EventDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long id;
+
+    @NotBlank(message = "Campo requerido")
     private String name;
+
+    @Future(message = "A data do evento não pode ser passada")
     private LocalDate date;
     private String url;
+
+    @NotNull(message = "Campo requerido")
     private Long cityId;
 
     public EventDTO() {

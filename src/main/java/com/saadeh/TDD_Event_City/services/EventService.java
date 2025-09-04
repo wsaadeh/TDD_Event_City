@@ -7,6 +7,8 @@ import com.saadeh.TDD_Event_City.repositories.EventRepository;
 import com.saadeh.TDD_Event_City.services.exceptions.ResourceNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,8 +52,8 @@ public class EventService {
     }
 
     @Transactional(readOnly = true)
-    public List<EventDTO> findAll() {
-        List<Event> list = repository.findAll(Sort.by("name"));
-        return list.stream().map(x-> new EventDTO(x)).toList();
+    public Page<EventDTO> findAll(Pageable pageable) {
+        Page<Event> page = repository.findAll(pageable);
+        return page.map(x-> new EventDTO(x));
     }
 }
