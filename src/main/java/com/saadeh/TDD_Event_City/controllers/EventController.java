@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/events")
@@ -16,6 +17,12 @@ public class EventController {
 
     @Autowired
     private EventService service;
+
+    @GetMapping
+    public ResponseEntity<List<EventDTO>> findAll(){
+        List<EventDTO> list = service.findAll();
+        return ResponseEntity.ok().body(list);
+    }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping(value = "/{id}")

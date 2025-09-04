@@ -7,8 +7,11 @@ import com.saadeh.TDD_Event_City.repositories.EventRepository;
 import com.saadeh.TDD_Event_City.services.exceptions.ResourceNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class EventService {
@@ -44,5 +47,11 @@ public class EventService {
         copyDtoToEntity(entity,dto);
         repository.save(entity);
         return new EventDTO(entity);
+    }
+
+    @Transactional(readOnly = true)
+    public List<EventDTO> findAll() {
+        List<Event> list = repository.findAll(Sort.by("name"));
+        return list.stream().map(x-> new EventDTO(x)).toList();
     }
 }
