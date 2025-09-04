@@ -68,8 +68,8 @@ public class CityControllerIT {
     }
 
     @Test
-    public void insertShouldReturn403WhenClientLogged() throws Exception{
-        CityDTO dto = new CityDTO(null,"Recife");
+    public void insertShouldReturn403WhenClientLogged() throws Exception {
+        CityDTO dto = new CityDTO(null, "Recife");
         String jsonBody = objectMapper.writeValueAsString(dto);
 
         ResultActions result =
@@ -84,13 +84,13 @@ public class CityControllerIT {
     }
 
     @Test
-    public void insertShouldInsertResourceWhenAdminLoggedAndCorrectData() throws Exception{
-        CityDTO dto = new CityDTO(null,"Recife");
+    public void insertShouldInsertResourceWhenAdminLoggedAndCorrectData() throws Exception {
+        CityDTO dto = new CityDTO(null, "Recife");
         String jsonBody = objectMapper.writeValueAsString(dto);
 
         ResultActions result =
                 mockMvc.perform(post("/cities")
-                        .header("Authorization","Bearer " + adminToken)
+                        .header("Authorization", "Bearer " + adminToken)
                         .content(jsonBody)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
@@ -108,7 +108,7 @@ public class CityControllerIT {
 
         ResultActions result =
                 mockMvc.perform(post("/cities")
-                        .header("Authorization", "Bearer" + adminToken)
+                        .header("Authorization","Bearer " + adminToken)
                         .content(jsonBody)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
@@ -139,6 +139,7 @@ public class CityControllerIT {
 
         ResultActions result =
                 mockMvc.perform(post("/cities")
+                        .header("Authorization", "Bearer " + adminToken)
                         .content(jsonBody)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON));
@@ -154,8 +155,8 @@ public class CityControllerIT {
         Long independentId = 5L;
 
         ResultActions result =
-                mockMvc.perform(delete("/cities/{id}", independentId));
-
+                mockMvc.perform(delete("/cities/{id}", independentId)
+                        .header("Authorization", "Bearer " + adminToken));
 
         result.andExpect(status().isNoContent());
     }
@@ -166,7 +167,8 @@ public class CityControllerIT {
         Long nonExistingId = 50L;
 
         ResultActions result =
-                mockMvc.perform(delete("/cities/{id}", nonExistingId));
+                mockMvc.perform(delete("/cities/{id}", nonExistingId)
+                        .header("Authorization", "Bearer " + adminToken));
 
         result.andExpect(status().isNotFound());
     }
@@ -178,7 +180,8 @@ public class CityControllerIT {
         Long dependentId = 1L;
 
         ResultActions result =
-                mockMvc.perform(delete("/cities/{id}", dependentId));
+                mockMvc.perform(delete("/cities/{id}", dependentId)
+                        .header("Authorization", "Bearer " + adminToken));
 
         result.andExpect(status().isBadRequest());
     }
